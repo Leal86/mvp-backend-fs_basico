@@ -1,0 +1,965 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "API de Chamados de Suporte",
+    "description": "Sistema de gerenciamento de chamados com usuários e departamentos.",
+    "version": "1.0.0"
+  },
+  "host": "localhost:5000",
+  "basePath": "/",
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "tags": [
+    {
+      "name": "📁 Departamentos",
+      "description": "Operações relacionadas a departamentos"
+    },
+    {
+      "name": "👤 Usuários",
+      "description": "Operações relacionadas a usuários"
+    },
+    {
+      "name": "📢 Chamados",
+      "description": "Operações relacionadas a chamados"
+    }
+  ],
+  "paths": {
+    "/departamentos": {
+      "get": {
+        "tags": ["📁 Departamentos"],
+        "summary": "Lista todos os departamentos",
+        "description": "Retorna todos os departamentos cadastrados no sistema.",
+        "responses": {
+          "200": {
+            "description": "Lista de departamentos retornada com sucesso.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Departamento"
+              }
+            },
+            "examples": {
+              "application/json": [
+                {
+                  "id": 1,
+                  "nome": "Tecnologia da Informação",
+                  "sigla": "TI",
+                  "telefone": "21999999999"
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["📁 Departamentos"],
+        "summary": "Cria um novo departamento",
+        "description": "Recebe os dados de um departamento em JSON e realiza o cadastro no banco de dados.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Dados do departamento a ser criado.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DepartamentoRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Departamento criado com sucesso.",
+            "schema": {
+              "$ref": "#/definitions/Departamento"
+            },
+            "examples": {
+              "application/json": {
+                "id": 1,
+                "nome": "Tecnologia da Informação",
+                "sigla": "TI",
+                "telefone": "21999999999"
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou dados inválidos enviados na requisição.",
+            "schema": {
+              "$ref": "#/definitions/ValidationErrorResponse"
+            },
+            "examples": {
+              "application/json": {
+                "error": [
+                  {
+                    "loc": ["nome"],
+                    "msg": "field required",
+                    "type": "value_error.missing"
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+
+    "/departamentos/{id}": {
+      "get": {
+        "tags": ["📁 Departamentos"],
+        "summary": "Busca um departamento por ID",
+        "description": "Retorna os dados de um departamento específico a partir do ID informado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do departamento.",
+            "required": true,
+            "type": "integer",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Departamento encontrado com sucesso.",
+            "schema": {
+              "$ref": "#/definitions/Departamento"
+            }
+          },
+          "404": {
+            "description": "Departamento não encontrado.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["📁 Departamentos"],
+        "summary": "Atualiza um departamento",
+        "description": "Atualiza os dados de um departamento existente com base no ID informado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do departamento.",
+            "required": true,
+            "type": "integer",
+            "example": 1
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Campos do departamento a serem atualizados.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DepartamentoUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Departamento atualizado com sucesso.",
+            "schema": {
+              "$ref": "#/definitions/Departamento"
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou dados inválidos enviados na requisição.",
+            "schema": {
+              "$ref": "#/definitions/ValidationErrorResponse"
+            },
+            "examples": {
+              "application/json": {
+                "error": [
+                  {
+                    "loc": ["telefone"],
+                    "msg": "value is not a valid string",
+                    "type": "type_error.string"
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Departamento não encontrado.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["📁 Departamentos"],
+        "summary": "Remove um departamento",
+        "description": "Remove um departamento do sistema com base no ID informado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do departamento.",
+            "required": true,
+            "type": "integer",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Departamento removido com sucesso.",
+            "schema": {
+              "$ref": "#/definitions/MessageResponse"
+            },
+            "examples": {
+              "application/json": {
+                "message": "Departamento deletado com sucesso."
+              }
+            }
+          },
+          "404": {
+            "description": "Departamento não encontrado.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+
+    "/usuarios": {
+      "get": {
+        "tags": ["👤 Usuários"],
+        "summary": "Lista todos os usuários",
+        "description": "Retorna todos os usuários cadastrados no sistema.",
+        "responses": {
+          "200": {
+            "description": "Lista de usuários retornada com sucesso.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Usuario"
+              }
+            },
+            "examples": {
+              "application/json": [
+                {
+                  "id": 1,
+                  "nome": "Alexsander",
+                  "matricula": "123",
+                  "funcao": "Analista",
+                  "departamento": "Tecnologia da Informação"
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["👤 Usuários"],
+        "summary": "Cria um novo usuário",
+        "description": "Recebe os dados de um usuário em JSON e realiza o cadastro no banco de dados.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Dados do usuário a ser criado.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UsuarioRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Usuário criado com sucesso.",
+            "schema": {
+              "$ref": "#/definitions/Usuario"
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou dados inválidos enviados na requisição.",
+            "schema": {
+              "$ref": "#/definitions/ValidationErrorResponse"
+            },
+            "examples": {
+              "application/json": {
+                "error": [
+                  {
+                    "loc": ["id_depto"],
+                    "msg": "value is not a valid integer",
+                    "type": "type_error.integer"
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Departamento informado não existe.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+
+    "/usuarios/{id}": {
+      "get": {
+        "tags": ["👤 Usuários"],
+        "summary": "Busca usuário por ID",
+        "description": "Retorna os dados de um usuário específico a partir do ID informado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do usuário.",
+            "required": true,
+            "type": "integer",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário encontrado com sucesso.",
+            "schema": {
+              "$ref": "#/definitions/Usuario"
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["👤 Usuários"],
+        "summary": "Atualiza um usuário",
+        "description": "Atualiza os dados de um usuário existente com base no ID informado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do usuário.",
+            "required": true,
+            "type": "integer",
+            "example": 1
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Campos do usuário a serem atualizados.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UsuarioUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário atualizado com sucesso.",
+            "schema": {
+              "$ref": "#/definitions/Usuario"
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou dados inválidos enviados na requisição.",
+            "schema": {
+              "$ref": "#/definitions/ValidationErrorResponse"
+            },
+            "examples": {
+              "application/json": {
+                "error": [
+                  {
+                    "loc": ["id_depto"],
+                    "msg": "value is not a valid integer",
+                    "type": "type_error.integer"
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário ou departamento não encontrado.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["👤 Usuários"],
+        "summary": "Remove um usuário",
+        "description": "Remove um usuário do sistema com base no ID informado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do usuário.",
+            "required": true,
+            "type": "integer",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário removido com sucesso.",
+            "schema": {
+              "$ref": "#/definitions/MessageResponse"
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+
+    "/chamados": {
+      "get": {
+        "tags": ["📢 Chamados"],
+        "summary": "Lista todos os chamados",
+        "description": "Retorna todos os chamados cadastrados no sistema.",
+        "responses": {
+          "200": {
+            "description": "Lista de chamados retornada com sucesso.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Chamado"
+              }
+            },
+            "examples": {
+              "application/json": [
+                {
+                  "id": 1,
+                  "titulo": "Erro no sistema",
+                  "descricao": "Não consigo acessar a aplicação",
+                  "status": "aberto",
+                  "prioridade": "Alta",
+                  "usuario": "Alexsander",
+                  "departamento": "Tecnologia da Informação"
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["📢 Chamados"],
+        "summary": "Cria um novo chamado",
+        "description": "Recebe os dados de um chamado em JSON e realiza o cadastro no banco de dados.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Dados do chamado a ser criado.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ChamadoRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Chamado criado com sucesso.",
+            "schema": {
+              "$ref": "#/definitions/Chamado"
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou dados inválidos enviados na requisição.",
+            "schema": {
+              "$ref": "#/definitions/ValidationErrorResponse"
+            },
+            "examples": {
+              "application/json": {
+                "error": [
+                  {
+                    "loc": ["id_usuario"],
+                    "msg": "value is not a valid integer",
+                    "type": "type_error.integer"
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário informado não existe.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+
+    "/chamados/{id}": {
+      "get": {
+        "tags": ["📢 Chamados"],
+        "summary": "Busca chamado por ID",
+        "description": "Retorna os dados de um chamado específico a partir do ID informado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do chamado.",
+            "required": true,
+            "type": "integer",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chamado encontrado com sucesso.",
+            "schema": {
+              "$ref": "#/definitions/Chamado"
+            }
+          },
+          "404": {
+            "description": "Chamado não encontrado.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["📢 Chamados"],
+        "summary": "Atualiza um chamado",
+        "description": "Atualiza os dados de um chamado existente com base no ID informado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do chamado.",
+            "required": true,
+            "type": "integer",
+            "example": 1
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Campos do chamado a serem atualizados.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ChamadoUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chamado atualizado com sucesso.",
+            "schema": {
+              "$ref": "#/definitions/Chamado"
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou dados inválidos enviados na requisição.",
+            "schema": {
+              "$ref": "#/definitions/ValidationErrorResponse"
+            },
+            "examples": {
+              "application/json": {
+                "error": [
+                  {
+                    "loc": ["prioridade"],
+                    "msg": "value is not a valid string",
+                    "type": "type_error.string"
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Chamado não encontrado.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["📢 Chamados"],
+        "summary": "Remove um chamado",
+        "description": "Remove um chamado do sistema com base no ID informado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do chamado.",
+            "required": true,
+            "type": "integer",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chamado removido com sucesso.",
+            "schema": {
+              "$ref": "#/definitions/MessageResponse"
+            }
+          },
+          "404": {
+            "description": "Chamado não encontrado.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "definitions": {
+    "Departamento": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "nome": {
+          "type": "string",
+          "example": "Tecnologia da Informação"
+        },
+        "sigla": {
+          "type": "string",
+          "example": "TI"
+        },
+        "telefone": {
+          "type": "string",
+          "example": "21999999999"
+        }
+      }
+    },
+
+    "DepartamentoRequest": {
+      "type": "object",
+      "required": ["nome"],
+      "properties": {
+        "nome": {
+          "type": "string",
+          "example": "Tecnologia da Informação"
+        },
+        "sigla": {
+          "type": "string",
+          "example": "TI"
+        },
+        "telefone": {
+          "type": "string",
+          "example": "21999999999"
+        }
+      }
+    },
+
+    "DepartamentoUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "nome": {
+          "type": "string",
+          "example": "Recursos Humanos"
+        },
+        "sigla": {
+          "type": "string",
+          "example": "RH"
+        },
+        "telefone": {
+          "type": "string",
+          "example": "21888888888"
+        }
+      }
+    },
+
+    "Usuario": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "nome": {
+          "type": "string",
+          "example": "Alexsander"
+        },
+        "matricula": {
+          "type": "string",
+          "example": "123"
+        },
+        "funcao": {
+          "type": "string",
+          "example": "Analista"
+        },
+        "departamento": {
+          "type": "string",
+          "example": "Tecnologia da Informação"
+        }
+      }
+    },
+
+    "UsuarioRequest": {
+      "type": "object",
+      "required": ["nome", "id_depto"],
+      "properties": {
+        "nome": {
+          "type": "string",
+          "example": "Alexsander"
+        },
+        "id_depto": {
+          "type": "integer",
+          "example": 1
+        },
+        "matricula": {
+          "type": "string",
+          "example": "123"
+        },
+        "funcao": {
+          "type": "string",
+          "example": "Analista"
+        }
+      }
+    },
+
+    "UsuarioUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "nome": {
+          "type": "string",
+          "example": "Alexsander Leal"
+        },
+        "id_depto": {
+          "type": "integer",
+          "example": 1
+        },
+        "matricula": {
+          "type": "string",
+          "example": "456"
+        },
+        "funcao": {
+          "type": "string",
+          "example": "Desenvolvedor Júnior"
+        }
+      }
+    },
+
+    "Chamado": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "titulo": {
+          "type": "string",
+          "example": "Erro no sistema"
+        },
+        "descricao": {
+          "type": "string",
+          "example": "Não consigo acessar a aplicação"
+        },
+        "status": {
+          "type": "string",
+          "example": "aberto"
+        },
+        "prioridade": {
+          "type": "string",
+          "example": "Alta"
+        },
+        "usuario": {
+          "type": "string",
+          "example": "Alexsander"
+        },
+        "departamento": {
+          "type": "string",
+          "example": "Tecnologia da Informação"
+        }
+      }
+    },
+
+    "ChamadoRequest": {
+      "type": "object",
+      "required": ["titulo", "descricao", "id_usuario"],
+      "properties": {
+        "titulo": {
+          "type": "string",
+          "example": "Erro no sistema"
+        },
+        "descricao": {
+          "type": "string",
+          "example": "Não consigo acessar a aplicação"
+        },
+        "prioridade": {
+          "type": "string",
+          "example": "Média"
+        },
+        "id_usuario": {
+          "type": "integer",
+          "example": 1
+        }
+      }
+    },
+
+    "ChamadoUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "titulo": {
+          "type": "string",
+          "example": "Erro de autenticação"
+        },
+        "descricao": {
+          "type": "string",
+          "example": "Agora o sistema retorna falha ao autenticar"
+        },
+        "status": {
+          "type": "string",
+          "example": "fechado"
+        },
+        "prioridade": {
+          "type": "string",
+          "example": "Alta"
+        }
+      }
+    },
+
+    "MessageResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Operação realizada com sucesso."
+        }
+      }
+    },
+
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "Erro ao processar a requisição."
+        }
+      }
+    },
+
+    "ValidationErrorResponse": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "loc": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": ["id_usuario"]
+              },
+              "msg": {
+                "type": "string",
+                "example": "value is not a valid integer"
+              },
+              "type": {
+                "type": "string",
+                "example": "type_error.integer"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
